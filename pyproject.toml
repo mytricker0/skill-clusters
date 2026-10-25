@@ -8,7 +8,7 @@ version = "0.1.0"
 description = "Discover installed skills, classify them into task-type clusters, rank by preference, and ask the user to pick before any member runs."
 readme = "README.md"
 requires-python = ">=3.11"
-license = { text = "MIT" }
+license = "MIT"
 dependencies = []
 
 [project.optional-dependencies]
