@@ -38,14 +38,12 @@ Default clusters (extend with your own via the arranger):
 
 ## How it works
 
-## How it works
-
 ```
 discover   classify   rank   pick   arrange
 (scan)  → (clusters) (order) (ask)  (file + log)
 ```
 
-1. **Discover** reads every `SKILL.md` in the project and user skill dirs.
+1. **Discover** reads every `SKILL.md` in the project and user skill dirs. It scans AI config dirs (`.claude`, `.hermes`, `.opencode`, ...) and can be restricted with `--config-dir`.
 2. **Classify** scores each skill against cluster keyword sets.
 3. **Rank** orders members by your preference file.
 4. **Pick** asks you for a choice before any member runs.
@@ -120,6 +118,20 @@ skill-clusters show --cluster diagrams
 
 Exit codes: `0` ok, `1` usage error, `2` recoverable problem reported in output
 (e.g. bad preferences).
+
+### Config dirs
+
+Discovery scans a fixed set of AI config dirs by default — `.claude`, `.hermes`,
+`.opencode`, `.aichat`, `.aider`, `.gemini`, `.cursor`, `.roo` — looking for
+`<dir>/skills/*/SKILL.md` in each. Override with `--config-dir` (repeatable):
+
+```bash
+# Scan only .hermes
+skill-clusters discover --config-dir .hermes
+
+# Scan .claude and .opencode
+skill-clusters discover --config-dir .claude --config-dir .opencode
+```
 
 ### Threshold knob
 
