@@ -1,6 +1,6 @@
 # Quickstart: validating the Skill Cluster Picker
 
-Prerequisites: Python 3.11+, `pip install -e .[test]`. Use the fixture tree in `tests/fixtures/skills/` (three diagram skills, one video skill, one with an empty description). Contracts: [cli.md](contracts/cli.md), [preferences.schema.md](contracts/preferences.schema.md). Entities: [data-model.md](data-model.md).
+Prerequisites: Python 3.11+, `pip install -e .[test]`. Use the fixture tree in `tests/fixtures/.claude/skills/` (three diagram skills, one video skill, one with an empty description). Contracts: [cli.md](contracts/cli.md), [preferences.schema.md](contracts/preferences.schema.md). Entities: [data-model.md](data-model.md).
 
 ## 1. Discovery and classification (US2)
 ```bash

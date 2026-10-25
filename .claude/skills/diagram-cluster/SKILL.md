@@ -1,6 +1,6 @@
 ---
 name: "diagram-cluster"
-description: "Propose diagram options for a request; user picks one before it is built."
+description: "Propose diagram options for a request; user picks one before it is built. (Superseded by the auto-generated picker: run `skill-clusters options --request \"...\"`.)"
 compatibility: "Works with any integration. First member of the diagrams skill cluster."
 metadata:
   author: "mytricker0"
