@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://python.org)
-[![Tests](https://img.shields.io/badge/tests-52_passing-brightgreen.svg)](#development)
+[![Tests](https://img.shields.io/github/actions/workflow/status/mytricker0/skill-clusters/test.yml?branch=main&label=tests)](#development)
 
 Group similar agent skills and MCP servers into clusters by task type. When you
 start a project or ask for something, the picker discovers the skills installed
@@ -23,8 +23,39 @@ which one to reach for when a task comes up. `skill-clusters` gives you:
   record your corrections.
 - **Picking** — ask *you* which skill to use before any member runs.
 
+## Featured skills
+
+Default clusters (extend with your own via the arranger):
+
+| Cluster | Purpose |
+|---------|---------|
+| `diagrams` | Mermaid, Excalidraw, architecture diagrams |
+| `video` | Editing, animation, short-form |
+| `research` | Papers, literature review, citations |
+| `charts` | Data viz, graphs, dashboards |
+| `documents` | Markdown, reports, docs |
+| `code-review` | Review, lint, refactor |
+
+## How it works
+
+## How it works
+
+```
+discover   classify   rank   pick   arrange
+(scan)  → (clusters) (order) (ask)  (file + log)
+```
+
+1. **Discover** reads every `SKILL.md` in the project and user skill dirs.
+2. **Classify** scores each skill against cluster keyword sets.
+3. **Rank** orders members by your preference file.
+4. **Pick** asks you for a choice before any member runs.
+5. **Arrange** auto-files new skills and logs your corrections.
+
 ## Table of contents
 
+- [Why](#why)
+- [Featured skills](#featured-skills)
+- [How it works](#how-it-works)
 - [Install](#install)
 - [Quickstart](#quickstart)
 - [Concepts](#concepts)
@@ -32,6 +63,7 @@ which one to reach for when a task comes up. `skill-clusters` gives you:
 - [State](#state)
 - [How classification works](#how-classification-works)
 - [Output example](#output-example)
+- [FAQ](#faq)
 - [Self-triggering limitation](#self-triggering-limitation)
 - [Development](#development)
 - [License](#license)
@@ -214,3 +246,13 @@ integration (end-to-end over a fixture tree) suites.
 ## License
 
 MIT. See [LICENSE](LICENSE).
+
+## Getting started
+
+```bash
+git clone https://github.com/mytricker0/skill-clusters.git
+cd skill-clusters
+uv sync --extra test
+pytest
+skill-clusters classify --project-dir . --user-dir ~/.claude/skills
+```

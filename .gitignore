@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+
+# Environments
+.venv/
+venv/
+env/
+
+# Test / cache
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Tool state
+.skill-clusters/
+*.state.json
+
+# Editor
+.vscode/
+.idea/
+*.swp
