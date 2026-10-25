@@ -1,0 +1,13 @@
+{
+  "memberships": [
+    {
+      "skill": "diagram-a",
+      "origin": "project",
+      "cluster": "diagrams",
+      "score": 5.0,
+      "source": "user",
+      "removed": true
+    }
+  ],
+  "proposed_clusters": []
+}
