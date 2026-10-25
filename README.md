@@ -3,6 +3,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://python.org)
 [![Tests](https://img.shields.io/github/actions/workflow/status/mytricker0/skill-clusters/test.yml?branch=main&label=tests)](#development)
+[![GitHub stars](https://img.shields.io/github/stars/mytricker0/skill-clusters)](#why)
 
 Group similar agent skills and MCP servers into clusters by task type. When you
 start a project or ask for something, the picker discovers the skills installed
