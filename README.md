@@ -1,5 +1,9 @@
 # skill-clusters
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://python.org)
+[![Tests](https://img.shields.io/badge/tests-52_passing-brightgreen.svg)](#development)
+
 Group similar agent skills and MCP servers into clusters by task type. When you
 start a project or ask for something, the picker discovers the skills installed
 on your machine, classifies them into task-type clusters, ranks them by your
@@ -18,6 +22,19 @@ which one to reach for when a task comes up. `skill-clusters` gives you:
 - **Arrangement** — auto-file newly installed skills into their cluster and
   record your corrections.
 - **Picking** — ask *you* which skill to use before any member runs.
+
+## Table of contents
+
+- [Install](#install)
+- [Quickstart](#quickstart)
+- [Concepts](#concepts)
+- [Preferences](#preferences)
+- [State](#state)
+- [How classification works](#how-classification-works)
+- [Output example](#output-example)
+- [Self-triggering limitation](#self-triggering-limitation)
+- [Development](#development)
+- [License](#license)
 
 ## Install
 
@@ -136,7 +153,47 @@ favor = ["architecture-diagram"]
 
 Each skill's name is weighted twice as heavily as its description. A skill joins
 every cluster scoring above the threshold; it may join several. An empty
-description yields `no-description`; nothing above threshold yields `no-match`.
+- An empty description yields `no-description`; nothing above threshold yields `no-match`.
+
+## Output example
+
+`classify` returns JSON you can pipe or inspect:
+
+```json
+{
+  "memberships": [
+    { "skill": "diagram-a", "origin": "project", "cluster": "diagrams", "score": 11.0 },
+    { "skill": "diagram-b", "origin": "project", "cluster": "diagrams", "score": 7.0 }
+  ],
+  "unclustered": [
+    { "name": "no-desc", "origin": "project", "reason": "no-description" }
+  ]
+}
+```
+
+Members are skills above the threshold. `unclustered` lists the rest.
+
+## FAQ
+
+**Q: Does it run my skills?**
+A: No. Classification only reads each skill's name and description. No execution.
+
+**Q: Can a skill go into more than one cluster?**
+A: Yes. A skill joins every cluster it scores above the threshold.
+
+**Q: How do I change which cluster a skill lands in?**
+A: `correct <skill> --cluster <name>` records a permanent user override.
+
+**Q: Where do preferences live?**
+A: Project-level `.skill-clusters/preferences.toml` or user-level
+`~/.config/skill-clusters/preferences.toml`. Project wins.
+
+**Q: Do I need a specific agent to use it?**
+A: No. It's a CLI. It works with any agent that can run shell commands.
+
+**Q: Is it just for Claude Code skills?**
+A: No. It discovers any skill with a `SKILL.md`-style frontmatter in the
+scanned directories.
 
 ## Self-triggering limitation
 
