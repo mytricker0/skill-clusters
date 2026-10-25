@@ -22,15 +22,11 @@ which one to reach for when a task comes up. `skill-clusters` gives you:
 ## Install
 
 ```bash
-pip install -e .
+uv sync --extra test
 ```
 
 Requires Python 3.11+ (stdlib only; `tomllib` for preferences). No third-party
-dependencies. For the test suite:
-
-```bash
-pip install -e .[test]
-```
+runtime dependencies. The lock file (`uv.lock`) pins the test toolchain.
 
 ## Quickstart
 

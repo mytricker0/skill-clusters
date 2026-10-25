@@ -1,3 +1,4 @@
+LICENSE
 README.md
 pyproject.toml
 src/skill_clusters/__init__.py
