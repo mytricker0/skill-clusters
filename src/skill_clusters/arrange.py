@@ -14,7 +14,7 @@ from collections import Counter
 from typing import Optional
 
 from .classify import _default_clusters as _default_clusters_fn, _tokenize, classify
-from .model import Cluster, Membership, Skill
+from .model import DEFAULT_THRESHOLD, Cluster, Membership, Skill
 from .store import State, render_clusters_md, save_state
 
 
@@ -37,10 +37,11 @@ def arrange(
     clusters: Optional[list[Cluster]] = None,
     dry_run: bool = False,
     state_path: str = "state.json",
+    threshold: float = DEFAULT_THRESHOLD,
 ) -> dict:
     """Diff discovery against saved state and file new skills."""
     clusters = clusters or _default_clusters_fn()
-    new_memberships = classify(skills, clusters).memberships
+    new_memberships = classify(skills, clusters, threshold).memberships
     new_names = {m.skill for m in new_memberships}
 
     filed: list[dict] = []
@@ -82,7 +83,7 @@ def arrange(
                 membership.removed = True
         state.proposed_clusters = proposed_clusters
         render_clusters_md(state.memberships, [c.name for c in clusters], "CLUSTERS.md")
-        save_state(state_path, state.memberships, state.proposed_clusters)
+        save_state(state_path, state.memberships, state.proposed_clusters, state.threshold)
 
     return {
         "filed": filed,
@@ -114,7 +115,7 @@ def correct(
             if c.name == cluster:
                 c.proposed = False
         state.proposed_clusters = [c for c in state.proposed_clusters if not c.proposed]
-        save_state(state_path, state.memberships, state.proposed_clusters)
+        save_state(state_path, state.memberships, state.proposed_clusters, state.threshold)
         render_clusters_md(state.memberships, [c.name for c in clusters], "CLUSTERS.md")
         return {"corrected": {"cluster": cluster, "confirmed": True}}
     membership = next((x for x in state.memberships if x.skill == skill and x.cluster == cluster), None)
@@ -126,7 +127,7 @@ def correct(
             skill=skill, origin="user", cluster=cluster, score=0.0, source="user", removed=remove
         )
         state.memberships.append(membership)
-    save_state(state_path, state.memberships, state.proposed_clusters)
+    save_state(state_path, state.memberships, state.proposed_clusters, state.threshold)
     render_clusters_md(state.memberships, [c.name for c in clusters], "CLUSTERS.md")
     return {
         "skill": skill,

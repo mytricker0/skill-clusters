@@ -11,7 +11,7 @@ import re
 from dataclasses import dataclass, field
 from typing import Optional
 
-from .model import Cluster, Membership, Skill
+from .model import DEFAULT_THRESHOLD, Cluster, Membership, Skill
 
 WORD_RE = re.compile(r"[A-Za-z0-9]+")
 
@@ -136,7 +136,7 @@ def _default_clusters() -> list[Cluster]:
 def classify(
     skills: list[Skill],
     clusters: Optional[list[Cluster]] = None,
-    threshold: float = 3.0,
+    threshold: float = DEFAULT_THRESHOLD,
 ) -> ClassifyResult:
     """Assign each skill to every cluster scoring above ``threshold``.
 

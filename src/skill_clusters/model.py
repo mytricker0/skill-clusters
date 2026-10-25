@@ -9,6 +9,8 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Optional
 
+DEFAULT_THRESHOLD = 3.0
+
 
 @dataclass
 class Skill:

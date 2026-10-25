@@ -1,4 +1,5 @@
 {
+  "threshold": 3.0,
   "memberships": [
     {
       "skill": "diagram-a",

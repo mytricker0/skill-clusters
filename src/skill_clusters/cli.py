@@ -14,7 +14,7 @@ import sys
 from typing import Optional
 
 from .classify import classify
-from .model import Membership, Skill
+from .model import DEFAULT_THRESHOLD, Membership, Skill
 from .pick import build_options
 from .rank import apply_preferences
 from .store import load_preferences, load_state, render_clusters_md
@@ -53,8 +53,11 @@ def cmd_discover(args) -> int:
 
 def cmd_classify(args) -> int:
     from .discover import discover
+    from .store import State
     skills = discover(args.project_dir, args.user_dir)
-    result = classify(skills, None, args.threshold)
+    state = load_state(args.state)
+    threshold = args.threshold if args.threshold is not None else state.threshold
+    result = classify(skills, None, threshold)
     out = {
         "memberships": [{"skill": m.skill, "origin": m.origin, "cluster": m.cluster, "score": m.score} for m in result.memberships],
         "unclustered": result.unclustered,
@@ -70,7 +73,7 @@ def cmd_options(args) -> int:
     skills = discover(args.project_dir, args.user_dir)
     state = load_state(args.state)
     if not state.memberships:
-        state = State(memberships=classify(skills, None).memberships)
+        state = State(memberships=classify(skills, None, state.threshold).memberships)
     prefs, warnings = load_preferences(args.prefs)
     result = build_options(args.request, skills, state.memberships, None, prefs, args.all)
     out = {
@@ -94,7 +97,7 @@ def cmd_arrange(args) -> int:
     from .store import State
     skills = discover(args.project_dir, args.user_dir)
     state = load_state(args.state)
-    result = arrange(skills, state, None, args.dry_run, args.state)
+    result = arrange(skills, state, None, args.dry_run, args.state, state.threshold)
     print(json.dumps(result, indent=2))
     return 0
 
@@ -105,6 +108,15 @@ def cmd_correct(args) -> int:
     state = load_state(args.state)
     result = correct(args.skill, args.cluster, args.remove, args.confirm_cluster, state, None, args.state)
     print(json.dumps(result, indent=2))
+    return 0
+
+
+def cmd_set_threshold(args) -> int:
+    from .store import State, save_state
+    state = load_state(args.state)
+    state.threshold = args.value
+    save_state(args.state, state.memberships, state.proposed_clusters, state.threshold)
+    print(json.dumps({"threshold": state.threshold}))
     return 0
 
 
@@ -157,7 +169,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.set_defaults(func=cmd_discover)
 
     p = sub.add_parser("classify", parents=[common])
-    p.add_argument("--threshold", type=float, default=3.0)
+    p.add_argument("--threshold", type=float, default=None)
     p.set_defaults(func=cmd_classify)
 
     p = sub.add_parser("options", parents=[common])
@@ -180,6 +192,10 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--cluster")
     p.add_argument("--skill")
     p.set_defaults(func=cmd_show)
+
+    p = sub.add_parser("set-threshold", parents=[common])
+    p.add_argument("value", type=float)
+    p.set_defaults(func=cmd_set_threshold)
 
     return parser
 

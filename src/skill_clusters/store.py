@@ -17,17 +17,18 @@ try:
 except ModuleNotFoundError:  # pragma: no cover
     tomllib = None
 
-from .model import Cluster, Membership
+from .model import DEFAULT_THRESHOLD, Cluster, Membership
 
 
 @dataclass
 class State:
     memberships: list[Membership]
     proposed_clusters: list[Cluster] = None  # type: ignore[assignment]
+    threshold: float = DEFAULT_THRESHOLD
 
 
 def _default_state() -> State:
-    return State(memberships=[], proposed_clusters=[])
+    return State(memberships=[], proposed_clusters=[], threshold=DEFAULT_THRESHOLD)
 
 
 def load_state(path: str) -> State:
@@ -54,12 +55,14 @@ def load_state(path: str) -> State:
         Cluster(name=c.get("name", ""), proposed=bool(c.get("proposed", False)))
         for c in data.get("proposed_clusters", [])
     ]
-    return State(memberships=memberships, proposed_clusters=proposed)
+    threshold = float(data.get("threshold", DEFAULT_THRESHOLD) or DEFAULT_THRESHOLD)
+    return State(memberships=memberships, proposed_clusters=proposed, threshold=threshold)
 
 
-def save_state(path: str, memberships: list[Membership], proposed_clusters: Optional[list[Cluster]] = None) -> None:
+def save_state(path: str, memberships: list[Membership], proposed_clusters: Optional[list[Cluster]] = None, threshold: float = DEFAULT_THRESHOLD) -> None:
     """Write ``state.json``. Never writes inside a skill directory."""
     data = {
+        "threshold": threshold,
         "memberships": [
             {
                 "skill": m.skill,
