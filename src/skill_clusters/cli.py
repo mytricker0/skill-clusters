@@ -43,9 +43,17 @@ def _human_options(result: dict) -> str:
     return "\n".join(lines)
 
 
+def _config_dirs(args) -> tuple[str, ...]:
+    """Config dirs to scan. --config-dir (repeatable) overrides the default."""
+    if args.config_dir:
+        return tuple(args.config_dir)
+    from .discover import DEFAULT_CONFIG_DIRS
+    return DEFAULT_CONFIG_DIRS
+
+
 def cmd_discover(args) -> int:
     from .discover import discover
-    skills = discover(args.project_dir, args.user_dir)
+    skills = discover(args.project_dir, args.user_dir, _config_dirs(args))
     out = [{"name": s.name, "description": s.description, "origin": s.origin, "kind": s.kind, "path": s.path} for s in skills]
     print(json.dumps({"skills": out}, indent=2))
     return 0
@@ -54,7 +62,7 @@ def cmd_discover(args) -> int:
 def cmd_classify(args) -> int:
     from .discover import discover
     from .store import State
-    skills = discover(args.project_dir, args.user_dir)
+    skills = discover(args.project_dir, args.user_dir, _config_dirs(args))
     state = load_state(args.state)
     threshold = args.threshold if args.threshold is not None else state.threshold
     result = classify(skills, None, threshold)
@@ -70,7 +78,7 @@ def cmd_options(args) -> int:
     from .classify import classify
     from .discover import discover
     from .store import State
-    skills = discover(args.project_dir, args.user_dir)
+    skills = discover(args.project_dir, args.user_dir, _config_dirs(args))
     state = load_state(args.state)
     if not state.memberships:
         state = State(memberships=classify(skills, None, state.threshold).memberships)
@@ -95,7 +103,7 @@ def cmd_arrange(args) -> int:
     from .arrange import arrange
     from .discover import discover
     from .store import State
-    skills = discover(args.project_dir, args.user_dir)
+    skills = discover(args.project_dir, args.user_dir, _config_dirs(args))
     state = load_state(args.state)
     result = arrange(skills, state, None, args.dry_run, args.state, state.threshold)
     print(json.dumps(result, indent=2))
@@ -164,6 +172,7 @@ def build_parser() -> argparse.ArgumentParser:
     common.add_argument("--state")
     common.add_argument("--prefs")
     common.add_argument("--format", choices=["json", "human"], default="json")
+    common.add_argument("--config-dir", action="append", default=None, metavar="DIR", help="AI config dir to scan (repeatable; default: .claude .hermes .opencode .aichat .aider .gemini .cursor .roo)")
 
     p = sub.add_parser("discover", parents=[common])
     p.set_defaults(func=cmd_discover)

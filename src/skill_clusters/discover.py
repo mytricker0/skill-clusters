@@ -62,6 +62,9 @@ def _parse_frontmatter(text: str) -> dict[str, str]:
     return fm
 
 
+DEFAULT_CONFIG_DIRS = (".claude", ".hermes", ".opencode", ".aichat", ".aider", ".gemini", ".cursor", ".roo")
+
+
 def _discover_in_root(root: str, origin: str) -> list[Skill]:
     """Discover skills directly under ``root/*/SKILL.md``."""
     skills: list[Skill] = []
@@ -95,15 +98,18 @@ def _discover_in_root(root: str, origin: str) -> list[Skill]:
     return skills
 
 
-def discover(project_dir: str, user_dir: str) -> list[Skill]:
+def discover(project_dir: str, user_dir: str, config_dirs: tuple[str, ...] = DEFAULT_CONFIG_DIRS) -> list[Skill]:
     """Discover installed skills from project and user locations.
 
-    Project skills live under ``<project_dir>/.claude/skills/*/SKILL.md`` and
-    user skills under ``<user_dir>/*/SKILL.md``. A missing directory is not an
-    error. A skill with no ``name`` frontmatter is skipped.
+    Project skills live under ``<project_dir>/<config>/skills/*/SKILL.md`` for
+    each config dir in ``config_dirs`` (default: ``.claude``, ``.hermes``,
+    ``.opencode``, ...). User skills live under ``<user_dir>/*/SKILL.md``. A
+    missing directory is not an error. A skill with no ``name`` frontmatter is
+    skipped.
     """
     skills: list[Skill] = []
-    project_root = os.path.join(project_dir, ".claude", "skills")
-    skills.extend(_discover_in_root(project_root, "project"))
+    for cfg in config_dirs:
+        project_root = os.path.join(project_dir, cfg, "skills")
+        skills.extend(_discover_in_root(project_root, "project"))
     skills.extend(_discover_in_root(user_dir, "user"))
     return skills
